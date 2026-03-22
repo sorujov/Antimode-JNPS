@@ -1,0 +1,27 @@
+\clearpage
+\begin{table}[p]
+\centering
+\caption{Bias and RMSE of $\hat p^*$ (percentile-point units)
+across DGPs and sample sizes; $R=500$, $B=299$.}
+\label{tab:bias_rmse}
+\begin{tabular}{lcccccccc}
+\toprule
+ & \multicolumn{2}{c}{$n=250$} & \multicolumn{2}{c}{$n=500$} & \multicolumn{2}{c}{$n=1000$} & \multicolumn{2}{c}{$n=5000$}\\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}\cmidrule(lr){6-7}\cmidrule(lr){8-9}
+DGP & Bias & RMSE & Bias & RMSE & Bias & RMSE & Bias & RMSE\\
+\midrule
+A6 (unimodal, size) & --- & --- & --- & --- & --- & --- & --- & ---\\
+A1 (weak, $\Delta=2.6$) & -0.005 & 0.090 & -0.004 & 0.074 & 0.001 & 0.061 & 0.002 & 0.035\\
+A2 (moderate, $\Delta=2.8$) & -0.005 & 0.078 & -0.004 & 0.060 & -0.001 & 0.045 & 0.002 & 0.028\\
+A3 (sharp, $\Delta=3$) & -0.006 & 0.066 & -0.004 & 0.047 & -0.000 & 0.034 & -0.000 & 0.021\\
+A4 (unequal $\pi$, $\Delta=3$) & -0.015 & 0.060 & -0.017 & 0.050 & -0.011 & 0.039 & -0.009 & 0.023\\
+A5 (unequal $\sigma$, $\Delta\approx2.7$) & 0.024 & 0.068 & 0.019 & 0.053 & 0.017 & 0.041 & 0.007 & 0.023\\
+B1 (skew-normal) & -0.004 & 0.074 & -0.008 & 0.066 & 0.001 & 0.050 & -0.001 & 0.034\\
+B2 (heavy tail $t_3$) & -0.005 & 0.075 & -0.007 & 0.056 & -0.002 & 0.049 & 0.000 & 0.027\\
+B3 (Weibull mixture) & 0.027 & 0.122 & 0.036 & 0.113 & 0.047 & 0.100 & 0.063 & 0.087\\
+C1 (two anti-modes) & 0.004 & 0.036 & 0.004 & 0.028 & 0.004 & 0.018 & 0.003 & 0.009\\
+C2 (three anti-modes) & -0.000 & 0.031 & 0.000 & 0.021 & -0.000 & 0.015 & -0.000 & 0.006\\
+C3 (bathtub) & 0.001 & 0.032 & 0.001 & 0.022 & 0.000 & 0.015 & -0.000 & 0.007\\
+\bottomrule
+\end{tabular}
+\end{table}

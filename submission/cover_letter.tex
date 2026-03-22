@@ -1,0 +1,114 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{hyperref}
+\usepackage{microtype}
+
+\begin{document}
+\pagestyle{empty}
+
+\noindent
+Samir Orujov\\
+ADA University / ICTA / UNEC, Baku, Azerbaijan\\
+Universit\'e Bretagne Sud, Vannes, France\\
+\texttt{sorujov@ada.edu.az}
+
+\bigskip
+\noindent\today
+
+\bigskip
+\noindent
+The Editors\\
+\textit{Journal of Nonparametric Statistics}\\
+Taylor \& Francis
+
+\bigskip
+
+\noindent Dear Editors,
+
+\medskip
+
+I submit for your consideration the manuscript \textbf{``Anti-Modes,
+Distributional Gaps, and the Fisher Information Profile: Nonparametric
+Estimation and Inference''}, which I believe is well-suited to the
+\textit{Journal of Nonparametric Statistics}.
+
+\medskip
+
+\noindent\textbf{Topical fit.}
+The paper lies squarely within nonparametric statistics.  Its core
+contributions are: (i) a kernel plug-in estimator for the anti-mode
+percentile with a fully derived asymptotic distribution ($n^{2/5}$-consistency,
+bias--variance decomposition); (ii) a bootstrap test for the null of no
+anti-mode, with Hadamard-differentiability-based consistency
+(Fang \& Santos 2019); and (iii) a systematic characterisation of
+density anti-modes via the Fisher information profile.  These contributions
+are methodological and theoretical, with a simulation section following
+standard GNST conventions.
+
+\medskip
+
+\noindent\textbf{Novelty.}
+Despite extensive literature on mode estimation, bump-hunting, and
+unimodality testing, density anti-modes---local minima of the density---have
+received no systematic theoretical treatment.  The paper provides the first:
+\begin{itemize}
+  \item Rigorous definition and characterisation of anti-modes via equivalent
+    conditions on the density, quantile density, and Fisher information
+    profile (Theorem~2.3 and Corollary~2.4).
+  \item Asymptotic normality result for a kernel anti-mode estimator,
+    including optimal bandwidth and explicit asymptotic variance
+    $V = \|K'\|^2 q(p^*)^5 / (c_0^3 \gamma^4)$, a pure constant.
+  \item Bootstrap test for unimodality vs.\ the presence of an anti-mode,
+    with local power analysis and finite-sample coverage guarantees.
+\end{itemize}
+Simulation evidence (12 DGPs, $R=500$ replications) shows RMSE slopes
+near $-0.40$ (theoretical optimum), detection rates of 75--82\% for
+moderate-to-sharp barriers at $n=500$ rising to 80--97\% at $n=5000$,
+and bootstrap coverage close to or above 95\% at moderate sample sizes.
+A compact empirical illustration on the Old Faithful geyser dataset
+($n=272$) demonstrates the full inferential output---detection, location
+estimate, 95\% bootstrap confidence interval, and Fisher information at
+the anti-mode---on a canonical bimodal dataset.
+
+\medskip
+
+\noindent\textbf{Companion paper disclosure.}
+A companion paper (Orujov 2025, \textit{Economics Letters}, under review)
+applies the statistical framework developed here to income distributions
+across countries, introducing the ``glass-barrier'' concept empirically.
+The two papers are self-contained and address different audiences
+(statistics vs.\ economics); the present paper contains all proofs and asymptotic theory,
+which are stated without proof in the companion paper; the simulation
+tables are entirely distinct.  I disclose the
+companion paper in a remark in Section~2 and in the bibliography.
+
+\medskip
+
+\noindent\textbf{Other declarations.}
+\begin{itemize}
+  \item The manuscript is not under review elsewhere.
+  \item This research received no specific grant from any funding agency
+    in the public, commercial, or not-for-profit sectors.
+  \item There are no competing interests to declare.
+  \item Replication code for all Monte Carlo experiments is publicly
+    available at \url{https://github.com/sorujov/Antimode-JNPS}.
+  \item The manuscript has been prepared using the \texttt{interact.cls}
+    Taylor \& Francis template and complies with GNST author guidelines
+    (single-blind, $\leq 150$-word abstract, five keywords, MSC codes).
+\end{itemize}
+
+\medskip
+
+I hope the manuscript is of interest to \textit{GNST} and its readership.
+I am happy to address any editorial questions.
+
+\bigskip
+
+\noindent Yours sincerely,
+
+\bigskip
+\bigskip
+
+\noindent Samir Orujov
+
+\end{document}

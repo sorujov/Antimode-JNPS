@@ -1,0 +1,27 @@
+\clearpage
+\begin{table}[p]
+\centering
+\caption{Bootstrap 95\% coverage (Cov., \%), detection rate (Det., \%),
+and false detection rate (FDR, \%) under the unimodal null (DGP~A6),
+across sample sizes.  Coverage is reported for DGPs with a true
+anti-mode only; ``---'' denotes not applicable.
+Results at $n=250$ are omitted: bootstrap coverage intervals are too
+wide to be informative at that sample size (median half-width
+${>}15$ percentile points).}
+\label{tab:coverage}
+\begin{tabular}{lccccccccc}
+\toprule
+ & \multicolumn{3}{c}{$n=500$} & \multicolumn{3}{c}{$n=1000$} & \multicolumn{3}{c}{$n=5000$}\\
+\cmidrule(lr){2-4}\cmidrule(lr){5-7}\cmidrule(lr){8-10}
+DGP & Cov. & Det. & FDR & Cov. & Det. & FDR & Cov. & Det. & FDR\\
+\midrule
+A6 (unimodal) & --- & --- & 13.0 & --- & --- & 9.6 & --- & --- & 1.0\\
+A1 (weak) & 96.1 & 72.6 & --- & 95.2 & 72.2 & --- & 89.6 & 61.8 & ---\\
+A2 (moderate) & 97.1 & 75.6 & --- & 96.0 & 73.8 & --- & 90.4 & 80.4 & ---\\
+A3 (sharp) & 97.4 & 81.6 & --- & 96.6 & 83.2 & --- & 93.6 & 93.4 & ---\\
+B2 (heavy tail) & 93.8 & 77.8 & --- & 94.9 & 87.0 & --- & 92.0 & 96.8 & ---\\
+C1 (joint) & 93.6 & 100.0 & --- & 95.4 & 100.0 & --- & 93.0 & 100.0 & ---\\
+C3 (bathtub) & 94.6 & 100.0 & --- & 95.6 & 100.0 & --- & 93.0 & 100.0 & ---\\
+\bottomrule
+\end{tabular}
+\end{table}

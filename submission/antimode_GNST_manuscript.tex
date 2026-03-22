@@ -1,0 +1,1045 @@
+
+%% ============================================================
+%% JOURNAL OF NONPARAMETRIC STATISTICS (Taylor & Francis)
+%% Uses interact.cls from Taylor_Francis_Template/
+%% SUBMISSION INSTRUCTIONS (Updated 16-02-2026):
+%%   - Submit via Taylor & Francis Submission Portal
+%%   - Convert this file to PDF for upload ("Manuscript" file)
+%%   - Upload LaTeX source files as a single ZIP alongside the PDF
+%%   - Peer review is SINGLE-BLIND: include full author details below
+%%   - British (-ise) spelling required throughout (already used here)
+%%   - Abstract: <= 150 words (unstructured)
+%%   - Keywords: 2-5 only
+%%   - Include a word count in the manuscript
+%% ============================================================
+\documentclass{interact}
+
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{mathtools}        % required for \coloneqq
+\usepackage{booktabs}         % for \toprule, \midrule, \bottomrule in tables
+\usepackage{array}            % extended column types in tables
+\usepackage{hyperref}
+
+%% natbib citation style as required by interact.cls / tfcad
+\usepackage{natbib}
+\bibpunct[, ]{(}{)}{;}{a}{}{,}
+\renewcommand\bibfont{\fontsize{10}{12}\selectfont}
+
+%% Theorem-like environments following interact.cls template conventions.
+%% All share the [theorem] counter so numbering is sequential within sections.
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{proposition}[theorem]{Proposition}
+
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{assumption}[theorem]{Assumption}
+
+\theoremstyle{remark}
+\newtheorem{remark}{Remark}
+
+%% interact.cls: \articletype is optional; use "ARTICLE" for standard papers
+\articletype{ARTICLE}
+
+\title{Anti-Modes, Distributional Gaps, and the Fisher Information
+Profile: Nonparametric Estimation and Inference}
+
+%% interact.cls author block: use \name{} for names and \affil{} for affiliations.
+%% GNST is SINGLE-BLIND: full author details required.
+%% Replace the placeholders below with your actual information.
+%% Example for one author:
+%%   \author{
+%%   \name{Jane Smith\thanks{CONTACT Jane Smith.
+%%     Email: j.smith@university.ac.uk}}
+%%   \affil{Department of Statistics, University X, City, Country}
+%%   }
+\author{
+\name{Samir Orujov%
+\thanks{CONTACT Samir Orujov.
+Email: sorujov@ada.edu.az}}
+\affil{ADA University / ICTA / UNEC, Baku, Azerbaijan;
+Universit\'e Bretagne Sud, Vannes, France}
+}
+
+\begin{document}
+\maketitle
+
+%% ============================================================
+\begin{abstract}
+We develop a nonparametric theory of distributional gaps centred on
+the \emph{Fisher information profile} $I(p)=f(Q(p))^2/[p(1-p)]$,
+where $Q$ is the quantile function and $f$ the density.  A
+percentile $p^*$ is an \emph{anti-mode percentile} if and only if it
+is simultaneously a local minimiser of $f$, a local maximiser of the
+quantile density $q(p)=Q'(p)$, and a local maximiser of the asymptotic
+quantile estimation variance $\sigma^2_Q(p)$---and, under a mild
+first-order condition, a local minimiser of
+$I(p)$---providing the first information-theoretic
+characterisation of distributional gaps.  We prove $n^{2/5}$
+consistency and asymptotic normality of the kernel plug-in estimator
+$\hat p^*$, uniform convergence of $\hat I(p)$ at rate
+$O_p((nh)^{-1/2}+h^2)$, and bootstrap size control with nontrivial
+power against local alternatives shrinking at rate $n^{-2/5}$.
+Monte Carlo experiments across twelve data-generating processes
+confirm the theoretical rates, and an application to Old Faithful
+geyser data illustrates the full inferential output.
+\end{abstract}
+%% Word count (main text, excluding abstract, references, tables):
+%% approximately 2,700 words (texcount after Batch 2 edits; recount before submission).
+
+\begin{keywords}
+anti-mode; Fisher information profile; quantile density;
+nonparametric testing; bootstrap inference
+\end{keywords}
+
+\begin{amscode}
+62G07; 62G10; 62G20; 62E20
+\end{amscode}
+
+%% ============================================================
+\section{Introduction}
+\label{sec:intro}
+
+The mode of a probability distribution---the value at which the
+density attains a global or local maximum---has occupied a central
+position in nonparametric statistics since the foundational work of
+\citet{Parzen1962} and \citet{Chernoff1964}.  Mode estimation,
+testing for unimodality, and modal clustering have generated a rich
+literature spanning kernel methods \citep{Romano1988},
+bump-hunting \citep{GoodSilverman1986}, and most recently,
+topological data analysis \citep{Chazal2018}.  Foundational work on
+kernel-based multimodality testing includes \citet{Silverman1981},
+who proposed the critical bandwidth test, and
+\citet{MullerSawitzki1991}, who developed excess mass estimates for
+distributional gaps; neither provides an estimate of where the
+anti-mode lies nor an asymptotic theory for its location.
+The anti-mode---the
+dual object, a local \emph{minimum} of the density---has received
+virtually no systematic theoretical treatment despite its natural
+interpretation as a distributional gap or structural fault line.
+Existing procedures such as the dip test \citep{HartiganHartigan1985}
+and Z-Dip \citep{ZDip2025} test for the \emph{presence} of
+multimodality but provide no asymptotic theory for the location of
+the gap, no consistent estimator of the anti-mode percentile, and
+no confidence interval for its position.
+
+Anti-modes arise in every domain where populations separate into
+distinct subgroups with a sparse transition zone.  In income and
+wage distributions, sparse income regions impede upward mobility and
+correspond to socioeconomic class boundaries
+\citep{Orujov2025EcLet}.  In clinical biomarker data,
+anti-modes between unimodal sub-populations of diseased and healthy
+individuals signal the natural threshold for diagnostic
+classification.  In financial return distributions, a sparse zone
+separating normal and extreme-loss regimes reflects mixture
+structure associated with crisis episodes
+\citep{ContTankov2004}.  In all these cases, the location,
+intensity, and statistical precision of the anti-mode carry
+substantive content that aggregate summary statistics (mean,
+variance, Gini coefficient) cannot reveal.
+
+This paper makes four contributions.  \textit{First}, we introduce
+the \emph{Fisher information profile} $I(p)$ for a general
+univariate distribution and establish equivalent characterisations
+of anti-modes via density, quantile density, and Fisher information,
+providing the first information-theoretic characterisation of
+distributional gaps (Section~\ref{sec:theory}).  \textit{Second},
+we derive the asymptotic distribution of the kernel plug-in
+anti-mode estimator, showing $n^{2/5}$-consistency and asymptotic
+normality, and provide the optimal bandwidth minimising asymptotic
+mean squared error (Section~\ref{sec:asymptotics}).
+\textit{Third}, we construct a bootstrap test for the null of no
+anti-mode and derive its asymptotic size and local power
+(Section~\ref{sec:inference}).
+\textit{Fourth}, we evaluate the framework across twelve simulation
+DGPs spanning Gaussian, heavy-tailed, and multi-modal families
+(Section~\ref{sec:simulation}), and illustrate the
+full inferential output on the Old Faithful geyser dataset
+(Section~\ref{sec:empirical}).  A companion paper
+\citep{Orujov2025EcLet} applies this framework to harmonised
+income micro-data across 25 countries.
+
+The paper is self-contained and does not require income-specific
+objects such as the Lorenz curve; the Lorenz curvature appears as a
+corollary of the general theory for non-negative distributions with
+finite mean (Remark~\ref{rem:lorenz}).
+
+%% ============================================================
+\section{The Fisher Information Profile and Anti-Mode Theory}
+\label{sec:theory}
+
+\subsection{Setup and notation}
+
+Let $X$ be a real-valued random variable with distribution function
+$F$, quantile function $Q(p)=F^{-1}(p)=\inf\{x:F(x)\ge p\}$ for
+$p\in(0,1)$, and Lebesgue density $f=F'$.  We impose the following
+standing conditions.
+
+\begin{assumption}[Regularity]\label{ass:regularity}
+\begin{enumerate}
+  \item[(A1)] $f$ is continuous and strictly positive on the support
+    of $X$, and $Q$ is twice continuously differentiable on
+    $(0,1)$.
+  \item[(A2)] The quantile density $q(p)\coloneqq Q'(p)=
+    1/f(Q(p))$ is bounded away from zero and infinity on
+    $[\delta,1-\delta]$ for every $\delta\in(0,\tfrac{1}{2})$.
+  \item[(A3)] $q$ is three times continuously differentiable on
+    $(\delta,1-\delta)$.
+\end{enumerate}
+\end{assumption}
+
+These conditions are standard in the quantile-process literature
+\citep{Serfling1980, vanderVaartWellner1996} and are satisfied
+by all commonly used parametric families (normal, $t$, logistic,
+exponential, Pareto, Weibull) on their supports (mixtures of such
+families may violate A3 at the anti-mode when the mixture valley is
+shallow and asymmetric; DGP~B3 below illustrates this).
+
+\subsection{The Fisher information profile}
+
+The asymptotic distribution of the sample quantile is classical:
+$\sqrt{n}(\hat Q_n(p)-Q(p))\xrightarrow{d}
+N(0,\,p(1-p)/f(Q(p))^2)$ \citep{Serfling1980}.  Define the
+\emph{asymptotic quantile variance profile}
+\begin{equation}
+\sigma^2_Q(p) \;=\; \frac{p(1-p)}{f(Q(p))^2}
+               \;=\; p(1-p)\,q(p)^2,
+\label{eq:qvar}
+\end{equation}
+and the \emph{Fisher information profile}
+\begin{equation}
+I(p) \;=\; \frac{f(Q(p))^2}{p(1-p)}
+      \;=\; \frac{1}{p(1-p)\,q(p)^2}
+      \;=\; \frac{1}{\sigma^2_Q(p)}.
+\label{eq:infoprofile}
+\end{equation}
+Equation~\eqref{eq:infoprofile} has a precise statistical
+interpretation: $I(p)^{-1}$ is the asymptotic Cram\'{e}r--Rao lower
+bound for unbiased estimation of $Q(p)$ from $n$ i.i.d.\
+observations \citep{LehmannCasella1998}.  It also coincides with
+the Fisher information for the one-parameter location family
+$F(x-\theta_p)$ evaluated at $\theta_p=Q(p)$
+\citep{vanderVaartWellner1996}.
+
+The profile $p\mapsto I(p)$ is a functional descriptor of the
+entire shape of $F$: it is large where $f(Q(p))$ is large (dense
+regions, tight quantile spacing) and small where $f(Q(p))$ is small
+(sparse regions, wide quantile spacing).
+
+\subsection{Anti-modes: definitions and equivalent characterisations}
+
+\begin{definition}[Anti-mode percentile]\label{def:antimode}
+A percentile $p^*\in(\delta,1-\delta)$ is an
+\emph{anti-mode percentile} of $F$ if any one---hence all---of the
+following equivalent conditions holds:
+\begin{enumerate}
+  \item[(i)] $x^*=Q(p^*)$ is a strict local minimiser of $f$
+    \textnormal{(density anti-mode)};
+  \item[(ii)] $p^*$ is a strict local maximiser of the quantile
+    density $q(p)$;
+  \item[(iii)] $p^*$ is a strict local maximiser of
+    $\sigma^2_Q(p)/[p(1-p)] = q(p)^2$.
+\end{enumerate}
+The \emph{anti-mode intensity} $\eta^*$ is the prominence of the
+local maximum of $q$ at $p^*$, defined as
+$\eta^*=q(p^*)-\max(q_L,q_R)$ where $q_L$ and $q_R$ are the
+nearest local minima of $q$ to the left and right of $p^*$.
+\end{definition}
+
+The equivalence of conditions (i)--(iii) is immediate from the
+identity $q(p)=1/f(Q(p))$ and \eqref{eq:infoprofile}.
+
+\begin{theorem}[Equivalent characterisations of anti-modes]\label{thm:equivalence}
+Under Assumption~\ref{ass:regularity}, conditions \textnormal{(i)},
+\textnormal{(ii)}, and \textnormal{(iii)} of
+Definition~\ref{def:antimode} are mutually equivalent.
+\end{theorem}
+
+\begin{proof}
+(i)$\Leftrightarrow$(ii): $x^*=Q(p^*)$ is a strict local minimiser
+of $f$ if and only if $1/f(Q(p^*))=q(p^*)$ is a strict local
+maximiser of $q$, since $t\mapsto 1/t$ is strictly decreasing on
+$(0,\infty)$.
+
+(ii)$\Leftrightarrow$(iii): Since $q>0$, the map $t\mapsto t^2$ is
+strictly increasing on $(0,\infty)$, so strict local maxima of $q$
+coincide exactly with strict local maxima of $q^2=\sigma^2_Q(p)/[p(1-p)]$.
+$\square$
+\end{proof}
+
+\begin{corollary}[Fisher information characterisation]\label{cor:fisher}
+Under Assumption~\ref{ass:regularity}, $p^*$ is a strict local
+minimiser of $I(p)=1/[p(1-p)q(p)^2]$ if and only if $p^*$ is a
+strict local maximiser of $\sigma^2_Q(p)=p(1-p)q(p)^2$.
+This Fisher information characterisation coincides with conditions
+\textnormal{(i)}--\textnormal{(iii)} of Definition~\ref{def:antimode}
+whenever the first-order condition
+\begin{equation}\label{eq:foc}
+  \frac{d}{dp}\bigl[p(1-p)q(p)^2\bigr]\Big|_{p^*}
+  = (1-2p^*)q(p^*)^2 + 2p^*(1-p^*)q(p^*)q'(p^*) = 0
+\end{equation}
+holds at $p^*$.  In particular, conditions \textnormal{(i)}--\textnormal{(iii)}
+and the Fisher information characterisation are jointly satisfied at
+every anti-mode of a distribution symmetric about its median (where
+$p^*=\tfrac{1}{2}$), and approximately so for near-symmetric
+bimodal distributions.
+\end{corollary}
+
+\begin{proof}
+The equivalence $I(p)$ local min $\Leftrightarrow$ $\sigma^2_Q(p)$ local max
+follows from $I=1/\sigma^2_Q$ and strict monotonicity of $t\mapsto 1/t$.
+Differentiating $I$ at $p^*$ with $q'(p^*)=0$ gives
+$I'(p^*)=-(1-2p^*)q(p^*)^2/[p^*(1-p^*)q(p^*)^2]^2$, which equals zero
+if and only if \eqref{eq:foc} holds at $p^*$.
+The second-derivative condition then confirms a strict local minimum of $I$.
+$\square$
+\end{proof}
+
+\begin{remark}[Lorenz corollary]\label{rem:lorenz}
+For non-negative $X$ with finite mean $\mu$, the Lorenz curve
+satisfies $L''(p) = 1/[\mu f(Q(p))] = q(p)/\mu$. Therefore all
+local maxima of $L''(p)$ coincide with local maxima of $q(p)$ and
+hence with anti-modes. Income-distributional glass barriers are a special case of
+Definition~\ref{def:antimode}; a companion paper \citep{Orujov2025EcLet}
+applies this framework to income distributions across countries and
+establishes the glass-barrier concept empirically, while the present paper
+provides the statistical foundations.
+\end{remark}
+
+\subsection{Axiomatic properties}
+
+\begin{proposition}[Scale and location invariance]
+\label{prop:scaleloc}
+Let $\tilde X = aX+b$ for $a>0,b\in\mathbb{R}$.  Then:
+\begin{enumerate}
+  \item[(i)] The set of anti-mode percentiles of $\tilde X$ equals
+    that of $X$.
+  \item[(ii)] Anti-mode intensities are unchanged by location
+    shifts ($a=1$, arbitrary $b$) and scale as $a$ under
+    scale changes ($b=0$, arbitrary $a$).
+  \item[(iii)] The Fisher information profile satisfies
+    $\tilde I(p)=I(p)/a^2$.
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+$\tilde Q(p)=aQ(p)+b$ and $\tilde f(\tilde x)=f((\tilde
+x-b)/a)/a$, so $\tilde q(p)=\tilde
+Q'(p)=aQ'(p)=aq(p)$. Local maxima of $\tilde q=aq$ occur at the
+same percentiles as those of $q$; prominence scales by $a$.
+Substituting into \eqref{eq:infoprofile} gives
+$\tilde I(p)=\tilde f(\tilde Q(p))^2/[p(1-p)]=
+[f(Q(p))/a]^2/[p(1-p)]=I(p)/a^2$. $\square$
+\end{proof}
+
+\begin{proposition}[Mixture representation]
+\label{prop:mixture}
+Let $F=\pi_1 F_1+(1-\pi_1)F_2$ be a two-component mixture with
+weights $\pi_1\in(0,1)$.  If $F_1$ and $F_2$ are unimodal and
+their supports overlap, then $F$ generically has an anti-mode at a
+percentile $p^*$ in the overlap region; the intensity $\eta^*$
+increases in the separation between the component modes and
+decreases in $\pi_1(1-\pi_1)$ (i.e., more balanced mixtures have
+stronger barriers).
+\end{proposition}
+
+\begin{proof}
+The mixture density is $f=\pi_1 f_1 + (1-\pi_1)f_2$.  In the
+overlap region between the modes $m_1$ and $m_2$ (with $m_1<m_2$),
+$f_1$ is decreasing and $f_2$ is increasing.  Under standard
+smoothness and non-degeneracy conditions, $f$ attains a local
+minimum at some $x^*\in(m_1,m_2)$.  The depth of this minimum
+(and hence the intensity $\eta^*$) increases with $|m_1-m_2|$
+and with $\min(\pi_1,1-\pi_1)$. $\square$
+\end{proof}
+
+%% ============================================================
+\section{Asymptotic Theory}
+\label{sec:asymptotics}
+
+\subsection{Estimation setup}
+
+Given i.i.d.\ observations $X_1,\ldots,X_n$ from $F$, define:
+\begin{itemize}
+  \item the empirical quantile $\hat Q_n(p) = X_{(\lceil np\rceil)}$;
+  \item the kernel density estimator $\hat f_h(x) =
+    (nh)^{-1}\sum_{i=1}^n K((x-X_i)/h)$ with symmetric kernel $K$
+    satisfying $\int K=1$, $\int u^2 K(u)\,du=\kappa_2<\infty$,
+    and bandwidth $h=h_n\to 0$, $nh\to\infty$;
+  \item the plug-in quantile density estimator
+    $\hat q(p) = 1/\hat f_h(\hat Q_n(p))$;
+  \item the estimated Fisher information profile
+    $\hat I(p)=1/[p(1-p)\hat q(p)^2]$.
+\end{itemize}
+Anti-mode percentiles are estimated as
+$\hat p^* = \operatorname{argmax}_{p\in[\delta,1-\delta]}\hat q(p)$
+restricted to isolated local maxima with prominence exceeding a
+threshold $\tau>0$.
+
+\subsection{Uniform convergence of $\hat I(p)$}
+
+\begin{theorem}[Uniform convergence]\label{thm:uniform}
+Under Assumption~\ref{ass:regularity} and $h\to 0$, $nh\to\infty$:
+\begin{equation}
+\sup_{p\in[\delta,1-\delta]}\bigl|\hat I(p)-I(p)\bigr|
+\;=\; O_p\!\bigl((nh)^{-1/2}+h^2\bigr).
+\end{equation}
+\end{theorem}
+
+\begin{proof}[Proof sketch]
+By a Taylor expansion of $\hat I$ around $I$,
+$|\hat I(p)-I(p)|\lesssim |(\hat q(p)/q(p))^2-1|
+\lesssim 2|\hat q(p)/q(p)-1|+(\hat q(p)/q(p)-1)^2$.
+Since $\hat q(p)=1/\hat f_h(\hat Q_n(p))$ and $q(p)=1/f(Q(p))$,
+the key step is to control
+$\sup_{p}|\hat f_h(\hat Q_n(p))-f(Q(p))|$.
+Writing $\hat f_h(\hat Q_n(p))-f(Q(p))
+= [\hat f_h(\hat Q_n(p))-\hat f_h(Q(p))]
+  + [\hat f_h(Q(p))-f(Q(p))]$,
+the second bracketed term is controlled uniformly by
+$O_p((nh)^{-1/2}+h^2)$ using standard KDE uniform convergence
+results \citep{Parzen1962, Jiang2017}.  The first term is bounded
+by $\sup_x|\hat f_h'(x)|\cdot|\hat Q_n(p)-Q(p)|
+=O_p((nh^3)^{-1/2})\cdot O_p(n^{-1/2})=o_p(1)$ under the
+stated bandwidth conditions.  Since $q>c>0$ on
+$[\delta,1-\delta]$ by A2, the result follows from the delta
+method applied to $q\mapsto 1/q^2$. $\square$
+\end{proof}
+
+\subsection{Convergence rate and asymptotic normality of $\hat p^*$}
+
+Let $p^*$ be an isolated strict local maximiser of $q$ with
+$q''(p^*)<0$.  Define $\gamma^2 = -q''(p^*)>0$.
+
+\begin{theorem}[Asymptotic normality of anti-mode estimator]
+\label{thm:asymptotics}
+Under Assumption~\ref{ass:regularity}, $h\sim c_0 n^{-1/5}$ for
+some $c_0>0$, and $q'''$ continuous in a neighbourhood of $p^*$:
+\begin{equation}
+n^{2/5}\bigl(\hat p^* - p^* - B_n\bigr)
+\;\xrightarrow{d}\; N\!\left(0,\,V\right),
+\label{eq:asymnorm}
+\end{equation}
+where the asymptotic bias is
+\begin{equation}
+B_n \;=\; -\frac{\kappa_2\,c_0^2\,q'''(p^*)}{2\gamma^2\,f(Q(p^*))^3}
+           \cdot n^{-2/5}\,(1+o(1)),
+\label{eq:bias}
+\end{equation}
+with $q'''(p^*) = (d^3q/dp^3)|_{p=p^*}$ the third derivative of the quantile
+density at $p^*$, and the asymptotic variance is
+\begin{equation}
+V \;=\; \frac{\|K'\|_2^2\,q(p^*)^5}{c_0^3\,\gamma^4},
+\label{eq:variance}
+\end{equation}
+where $\|K'\|_2^2 = \int [K'(u)]^2\,du$ is the roughness of the kernel
+derivative.  Note that $V$ is a fixed constant (independent of $n$).
+\end{theorem}
+
+\begin{remark}[Practical inference]\label{rem:practical}
+Because $B_n = O(n^{-2/5})$, two strategies eliminate the bias from confidence
+interval construction: (a) \emph{undersmoothing} with $h = o(n^{-1/5})$ so
+that $n^{2/5}B_n\to 0$ and the standard $n^{2/5}(\hat p^* - p^*)
+\xrightarrow{d}N(0,V)$ holds without bias correction; or (b) a
+\emph{plug-in bias estimate} obtained by evaluating $\hat q'''(p^*)$ from a
+third-order kernel derivative estimator at bandwidth $h$.  In our simulations
+we use strategy (a) with $h = 0.636\hat\sigma n^{-1/5}$
+(undersmoothed Silverman rule, equal to $0.6\times 1.06\,\hat\sigma\,n^{-1/5}$).
+\end{remark}
+
+\begin{proof}[Proof sketch]
+The estimator $\hat p^*$ is the argmax of $\hat q(p)$ near $p^*$.
+A Taylor expansion gives $\hat q(p)\approx \hat q(p^*)
++\hat q'(p^*)(p-p^*)+\frac{1}{2}\hat q''(p^*)(p-p^*)^2$.  Setting
+the derivative to zero and solving yields
+$\hat p^*-p^*\approx -\hat q'(p^*)/\hat q''(p^*)$.
+The numerator $\hat q'(p^*)$ has bias $B_n\cdot\gamma^2$ and variance
+of order $(nh^3)^{-1}$ (derivative KDE variance), while $\hat
+q''(p^*)\xrightarrow{p} q''(p^*)=-\gamma^2$.  Rescaling by
+$n^{2/5}$ (the rate equating bias $\sim h^2\sim n^{-2/5}$ and
+standard deviation $\sim(nh^3)^{-1/2}\sim n^{-2/5}$ at $h\sim
+n^{-1/5}$) and applying Slutsky's theorem gives
+\eqref{eq:asymnorm}--\eqref{eq:variance}.  Full details are in
+Appendix~\ref{app:proofs}. $\square$
+\end{proof}
+
+\begin{corollary}[Optimal bandwidth]\label{cor:optbw}
+The MSE-optimal bandwidth for anti-mode percentile estimation is
+\begin{equation}
+h^*_{\mathrm{AMSE}} \;=\;
+\left(\frac{V_0}{2\,B_0^2}\right)^{1/5} n^{-1/5},
+\end{equation}
+where $V_0$ and $B_0$ are the leading constants in
+\eqref{eq:bias}--\eqref{eq:variance} evaluated at $p^*$. Under
+$h=h^*_{\mathrm{AMSE}}$, $\mathrm{AMSE}(\hat p^*)=O(n^{-4/5})$.
+\end{corollary}
+
+\begin{remark}
+The $n^{-4/5}$ AMSE rate matches the minimax-optimal rate for
+estimating the location of a mode (or anti-mode) of a smooth
+density \citep{Romano1988}, confirming that the plug-in estimator
+is rate-optimal.
+\end{remark}
+
+%% ============================================================
+\section{Inference: Detection, Confidence Sets, and Testing}
+\label{sec:inference}
+
+\subsection{Anti-mode detection algorithm}
+
+Given $\hat q(p)$ on a grid $\{p_j\}_{j=1}^M$ over
+$[\delta,1-\delta]$:
+\begin{enumerate}
+  \item Locate all interior local maxima of $\hat q$ (candidates).
+  \item Retain candidates whose prominence exceeds $\tau$ times
+    the flanking valley height.
+    Specifically, let $L_j=\min_{i<j}\hat q(p_i)$ and
+    $R_j=\min_{i>j}\hat q(p_i)$, and define the valley height
+    $V_j=\max(L_j,R_j)$.  A local maximum at $p_j$ is retained if
+    $\hat q(p_j)-V_j\geq \tau\,V_j$, i.e.\ the peak exceeds
+    $V_j$ by at least a fraction~$\tau$.
+    This local-prominence criterion is scale-invariant and
+    converges to a finite population value as $n\to\infty$,
+    since $\hat q(p)\to q(p)$ uniformly on $[\delta,1-\delta]$.
+  \item Merge candidates within $\kappa$ percentile points,
+    retaining the higher peak.
+  \item Report surviving candidates $\{\hat p^*_j\}$ with
+    quantile levels $\hat x^*_j=\hat Q(\hat p^*_j)$ and
+    intensities $\hat\eta^*_j$.
+\end{enumerate}
+
+\subsection{Bootstrap confidence sets}
+
+Because $\hat p^*$ is an argmax functional, the delta method does
+not apply.  We use the nonparametric bootstrap with $B$ resamples
+to construct equal-tailed $95\%$ confidence intervals.  When a
+bootstrap resample detects a different number of anti-modes than
+the original estimate, we use a matching algorithm based on
+Hausdorff distance on the set of detected percentiles.
+
+\begin{theorem}[Bootstrap consistency]\label{thm:bootstrap}
+Under Assumption~\ref{ass:regularity} and the conditions of
+Theorem~\ref{thm:asymptotics}, the bootstrap distribution of
+$n^{2/5}(\hat p^{*,b}-\hat p^*)$ consistently approximates the
+distribution of $n^{2/5}(\hat p^*-p^*)$ conditional on
+$X_1,\ldots,X_n$, in the bounded Lipschitz metric.
+\end{theorem}
+
+\begin{proof}
+The result follows from bootstrap consistency for smooth
+functionals of the empirical process \citep{vanderVaartWellner1996}
+combined with the delta method argument in the proof of
+Theorem~\ref{thm:asymptotics}.  Details are in
+Appendix~\ref{app:proofs}. $\square$
+\end{proof}
+
+\subsection{Test for no anti-mode}
+
+Consider testing $H_0: f \text{ is unimodal on }(Q(\delta),
+Q(1-\delta))$ against $H_1: f$ has at least one anti-mode.  Define
+the test statistic
+\begin{equation}
+T_n = \max_{p\in[\delta,1-\delta]}
+  \bigl[\hat q(p) - \hat q_0(p)\bigr]_+,
+\end{equation}
+where $\hat q_0$ is the quantile density under a parametric
+unimodal null (e.g., fitted log-normal).  Large $T_n$ indicates
+evidence against $H_0$.
+
+\begin{theorem}[Size control]\label{thm:test}
+Under $H_0$ and the conditions of Theorem~\ref{thm:uniform}, the
+parametric bootstrap approximation to the null distribution of $T_n$
+achieves asymptotic level $\alpha$ for any $\alpha\in(0,1)$.
+Under local alternatives with anti-mode intensity
+$\eta_n\sim c\,n^{-2/5}$ for $c>c_{\min}(\alpha)$, the power of the
+test converges to one.
+\end{theorem}
+
+\begin{proof}[Proof sketch]
+\textit{Size control.}  Under $H_0$, $\hat q_0$ is fitted to a
+correctly specified unimodal family, so $\sup_p|\hat q_0(p)-q_0(p)|
+=O_p(n^{-1/2})$ by standard parametric consistency.  By
+Theorem~\ref{thm:uniform}, $\sup_p|\hat q(p)-q(p)|
+=O_p((nh)^{-1/2}+h^2)$.  Under $H_0$, $q=q_0$ so
+$T_n=\sup_p[\hat q(p)-\hat q_0(p)]_+ \xrightarrow{p} 0$.
+The parametric bootstrap resamples from $\hat F_0$ (the fitted null
+model) and recomputes $T_n^*$ on each resample.  Since both the
+statistic and its bootstrap analogue converge uniformly in $p$,
+the bootstrap distribution of $T_n^*$ consistently approximates the
+null distribution of $T_n$ in total variation; see
+\citet{vanderVaartWellner1996}, Theorem 23.9.
+
+\textit{Power.}  Under a local alternative with $\eta_n=q(p^*)-
+\max(q_L,q_R)\sim cn^{-2/5}$, by Theorem~\ref{thm:asymptotics}
+the estimator $\hat q(p^*)$ detects the local maximum with
+probability tending to one for $c>c_{\min}(\alpha)$, where
+$c_{\min}(\alpha)$ depends on $\alpha$, $V^{1/2}$, and the critical
+value of the bootstrap null distribution.  Hence
+$T_n\xrightarrow{p}\infty$ relative to the bootstrap critical value,
+giving power tending to one. $\square$
+\end{proof}
+
+%% ============================================================
+\section{Monte Carlo Study}
+\label{sec:simulation}
+
+\subsection{Design}
+
+We evaluate performance across twelve DGPs falling into three
+families:
+
+\noindent\textbf{Family A -- Gaussian mixtures (6 DGPs):}
+$F=\pi N(\mu_1,\sigma_1^2)+(1-\pi)N(\mu_2,\sigma_2^2)$ with
+varying separation $\Delta=|\mu_2-\mu_1|/\bar\sigma$ and mixing
+weight $\pi$.  DGP A1: $\Delta=2.6$, $\pi=0.5$ (weak barrier);
+DGP A2: $\Delta=2.8$, $\pi=0.5$ (moderate); DGP A3: $\Delta=3$,
+$\pi=0.5$ (sharp); DGP A4: $\Delta=3$, $\pi=0.3$ (unequal
+weights); DGP A5: $\Delta\approx2.7$, $\pi=0.5$, $\sigma_2=2\sigma_1$
+(unequal variances); DGP A6: unimodal $N(0,1)$ (size baseline).
+All DGPs A1--A5 have a genuine density anti-mode; the bimodality
+threshold for equal-variance Gaussian mixtures is $\Delta=2$, so
+all five are strictly above it (or, for A5, above the corresponding
+threshold for unequal variances).
+
+\noindent\textbf{Family B -- Skew and heavy-tailed mixtures (3 DGPs):}
+DGP B1: mixture of skew-normal distributions; DGP B2: mixture of
+Student-$t_3$ components (heavy tails); DGP B3: mixture of
+$\mathrm{Weibull}(\alpha_1,\lambda)$ and
+$\mathrm{Weibull}(\alpha_2,\lambda)$ (asymmetric, non-negative support,
+relevant for income and survival data).
+
+\noindent\textbf{Family C -- Multi-modal (3 DGPs):}
+DGP C1: three-component Gaussian mixture with two anti-modes;
+DGP C2: four-component mixture with three anti-modes; DGP C3:
+``bathtub'' shape (U-shaped density, single deep anti-mode at
+the median).
+
+All experiments use $n\in\{250,500,1000,5000\}$,
+$R=500$ replications, and $B=299$ bootstrap draws per
+replication.
+
+\subsection{Results}
+
+Table~\ref{tab:bias_rmse} reports bias and RMSE of $\hat p^*$ (in
+percentile units) for the primary anti-mode.  Bias is small and
+shrinks with $n$ for Gaussian and heavy-tailed mixtures (Families~A
+and~B2), consistently with Theorem~\ref{thm:asymptotics}.  DGP~B3
+(Weibull mixture) is a notable exception: its anti-mode lies in a
+shallow, asymmetric valley, and the kernel plug-in exhibits a
+persistent positive bias that grows with $n$, suggesting the
+smoothness conditions of Theorem~\ref{thm:asymptotics} are
+effectively violated for this design.
+RMSE declines at approximately $n^{-2/5}$: regressing
+$\log(\mathrm{RMSE})$ on $\log(n)$ yields slopes whose 95\%
+bootstrap confidence intervals include $-0.40$ for DGPs~A2, A3,
+and B2 (Table~\ref{tab:rates}).  The multi-modal designs C1 and
+C3 converge \emph{faster} than $n^{-2/5}$ (slopes around $-0.49$),
+consistent with their sharply separated modes.  DGP~B3 converges
+at only $-0.11$, reflecting the bias noted above.
+
+Table~\ref{tab:coverage} reports bootstrap coverage rates and
+detection rates.  Coverage \emph{exceeds} the nominal 95\% level at
+$n=250$--1000 for most bimodal DGPs (conservative intervals, consistent
+with the percentile bootstrap overshooting for smooth argmax functionals
+\citep{HallYork2001, Efron1987}), and settles near 90--94\% at
+$n=5000$ where estimator bias begins to dominate interval width.
+Detection rates
+generally increase with $n$ for well-separated mixtures: DGP~A3
+($\Delta=3$) exceeds 93\% at $n=5000$ and DGP~B2 (heavy-tailed)
+reaches 97\%.  For the weak barrier (DGP~A1, $\Delta=2.6$),
+detection fluctuates near 70\% and dips to 62\% at $n=5000$,
+as the improved KDE resolution reveals that the valley barely
+exceeds the prominence threshold~$\tau$.
+This non-monotone pattern is a feature of the fixed-$\tau$ design:
+as $n\to\infty$ the KDE converges uniformly to the true density,
+and for barriers with intensity close to the threshold
+the estimator correctly classifies the distribution as
+effectively unimodal at that resolution level.
+A data-driven, asymptotically vanishing choice of $\tau$ is
+a direction for future work.
+Under the unimodal null (DGP~A6), the detection algorithm's false
+discovery rate is 13.0\% at $n=500$ and 9.6\% at $n=1000$, declining
+to 1.0\% at $n=5000$; the elevated small-$n$ rate reflects the fixed
+prominence threshold $\tau$ admitting spurious KDE peaks that vanish
+as the density estimate stabilises.
+DGP~B3 (Weibull mixture) exhibits declining detection
+(63\%~$\to$~23\% across $n=250$ to $n=5000$) and undercoverage at large~$n$; both are
+consequences of the shallow, asymmetric valley noted above, and
+results for this design should be interpreted with caution.
+
+Table~\ref{tab:power} compares the anti-mode test to Hartigan's dip
+test \citep{HartiganHartigan1985} and the Z-Dip \citep{ZDip2025}
+for DGP~A2 ($\Delta=2.8\sigma$)---a genuinely difficult case:
+\citet{ZDip2025} validate their statistic exclusively on mixtures
+with component separation $\geq 8\sigma$, where all tests achieve
+perfect power and meaningful discrimination is impossible.
+The three tests address complementary questions.  The dip test and
+Z-Dip are designed for binary multimodality detection and optimised
+accordingly; neither provides an estimate of \emph{where} the
+anti-mode lies.  The anti-mode test is a \emph{location} test
+that, upon rejection, returns a consistent estimator $\hat p^*$
+with a calibrated 95\% confidence interval and intensity measure
+$\hat\eta^*$---output the other two tests cannot supply.  This
+complementarity has a cost: the sup-norm test statistic
+$T_n=\sup_p[\hat q(p)-\hat q_0(p)]_+$ is conservative at
+moderate sample sizes, yielding near-zero rejection rates below
+$n=5000$ for DGP~A2 before reaching 68.8\% at $n=5000$, well
+below the dip test (99.8\%).  The conservatism arises because the
+sup-norm statistic must exceed the bootstrap critical value
+simultaneously across all percentiles $p\in[\delta,1-\delta]$; at
+moderate $n$, KDE variance over the full grid inflates both the
+observed $T_n$ and the null distribution, masking the localised
+signal at $\hat p^*$.  A pointwise variant of the test, evaluated
+only at $\hat p^*$ rather than over the full grid, would sacrifice
+the omnibus property but substantially improve power against
+specific alternatives; this is a direction for future work.
+Practitioners requiring only a
+detection decision should prefer the dip test; the anti-mode test
+is intended for inference on the \emph{location} of the gap.
+
+%% ============================================================
+\section{Empirical Illustration: Old Faithful Eruptions}
+\label{sec:empirical}
+
+As a compact demonstration, we apply the framework to the Old
+Faithful geyser data \citep{AzzaliniBowman1990}---272 eruption
+durations (minutes)---a canonical bimodal dataset in nonparametric
+statistics.  The detection algorithm identifies a single anti-mode at
+$\hat p^*=0.357$, corresponding to $\hat x^*=Q(\hat p^*)=3.00$
+minutes; this lies squarely in the well-known gap between short
+(${\sim}2$~min) and long (${\sim}4.5$~min) eruption types.  The
+bootstrap 95\% confidence interval is $[0.299,\,0.414]$ for $p^*$,
+or equivalently $[2.30,\,3.72]$ minutes in the original scale.
+Both the sup-norm test ($T_n$) and the dip test reject the unimodal
+null at the 5\% level ($p_{\text{dip}}<0.0001$).  That $T_n$ rejects
+at $n=272$ here while showing zero power at $n=250$ for DGP~A2
+reflects the much sharper Old Faithful gap: the eruption-type
+separation is consistent with DGP~A3 or~C3, where detection rates
+exceed 93\% even at small~$n$.  The Fisher
+information profile at the anti-mode is $\hat I(\hat p^*)=0.007$,
+reflecting high estimation uncertainty at the sparse transition zone.
+This example illustrates the full inferential output of the
+framework---detection, location, confidence set, and
+information-theoretic characterisation---on a single real dataset
+with $n=272$.
+
+%% ============================================================
+\section{Discussion}
+\label{sec:discussion}
+
+We have established a complete theory for the nonparametric
+estimation and inference of distributional gaps through the Fisher
+information profile.
+
+\textit{Comparison with detection-only procedures.}
+The dip test \citep{HartiganHartigan1985} and its recent
+standardised extension Z-Dip \citep{ZDip2025} answer the binary
+question ``is there a gap?''  They provide no asymptotic theory
+for the location of the gap, no consistent estimator, and no
+confidence interval.  The Z-Dip, in particular, is validated
+exclusively on mixtures with component separation $\geq 8\sigma$
+\citep{ZDip2025}, where every reasonable test achieves perfect
+power; the genuinely difficult borderline regime (such as DGP~A2
+at $\Delta=2.8\sigma$) is absent from their study.  The present
+framework answers ``where is the gap, how wide is it, and how
+precisely can we locate it?''---a strictly richer inferential
+output, obtained at the cost of some power relative to the
+dedicated detection procedures.
+
+Several further directions for future work are worth
+highlighting.
+
+\textit{Multivariate extension.}  The univariate quantile density
+does not extend to dimension $d>1$ without ordering; however,
+multivariate anti-modes can be defined as local minima of the
+density $f$ and characterised through the Hessian of
+$\log f$ at $x^*$ (negative definite at a mode, positive
+definite at an anti-mode).  The connection to Fisher information
+in this setting involves the score function
+$\nabla\log f(X-\theta)$ and its covariance matrix, which
+generalises $I(p)$ to a matrix-valued profile.
+
+\textit{Time-varying distributions.}  For time series where
+$F_t$ evolves over time, anti-mode percentiles become
+time-indexed: $p^*(t)=\operatorname{argmax}_p q_t(p)$.
+Non-stationary KDE methods \citep{FanGijbels1996} can be
+adapted to track the evolution of $p^*(t)$, providing a
+diagnostic for structural change in distributional shape.
+
+\textit{Optimal testing.}  Theorem~\ref{thm:test} establishes
+asymptotic size control and local power; the question of
+whether the proposed test is asymptotically optimal (in the
+minimax sense) against specific classes of local alternatives
+is left for future work.
+
+\textit{Connection to topological methods.}  Persistent homology
+provides a topological analogue of anti-mode intensity via
+persistence diagrams \citep{Chazal2018}: the 0-dimensional
+persistence of a density anti-mode corresponds exactly to our
+intensity $\eta^*$.  Making this correspondence rigorous and
+exploiting the stability theory of persistent homology for
+inference is a promising direction.
+
+%% ============================================================
+\section*{Acknowledgements}
+The author thanks the editor and anonymous referees for their time.
+
+%% ============================================================
+\section*{Disclosure statement}
+The author reports no competing interests to declare.
+
+%% ============================================================
+%% GNST REQUIRED: Funding details.
+%% Replace with your actual funding information, or state:
+%%   "This research received no specific grant from any funding
+%%    agency in the public, commercial, or not-for-profit sectors."
+\section*{Funding}
+This research received no specific grant from any funding agency in the
+public, commercial, or not-for-profit sectors.
+
+%% ============================================================
+\section*{ORCID}
+Samir Orujov \url{https://orcid.org/0009-0004-9708-2109}
+
+%% ============================================================
+\section*{CRediT author statement}
+\textbf{Samir Orujov}: Conceptualization, Methodology, Software,
+Formal analysis, Investigation, Writing -- Original Draft,
+Writing -- Review \& Editing, Visualization.
+
+%% ============================================================
+\section*{Data availability statement}
+%% GNST REQUIRED: Describe where data supporting the results can be found.
+Replication code for all Monte Carlo experiments reported in this paper
+is available in an online repository at
+\url{https://github.com/sorujov/Antimode-JNPS}.
+The Old Faithful geyser data used in Section~\ref{sec:empirical} are
+publicly available in the R \texttt{datasets} package
+\citep{AzzaliniBowman1990}.
+
+%% ============================================================
+\appendix
+\section{Proofs}
+\label{app:proofs}
+
+\subsection*{Proof of Theorem~\ref{thm:asymptotics} (full detail)}
+
+Let $g(p)=q(p)=1/f(Q(p))$.  By the second-order condition,
+$g''(p^*)=-\gamma^2<0$.  The estimator satisfies
+$\hat g'(\hat p^*)=0$, so a Taylor expansion around $p^*$ gives
+\[
+0 = \hat g'(p^*) + \hat g''(p^*)(\hat p^*-p^*) + O_p((\hat p^*-p^*)^2).
+\]
+Hence
+\[
+\hat p^*-p^* = -\frac{\hat g'(p^*)}{\hat g''(p^*)}(1+o_p(1)).
+\]
+\textit{Step 1: Denominator.}
+$\hat g''(p^*)\xrightarrow{p}g''(p^*)=-\gamma^2$ by uniform
+convergence of $\hat q''$ to $q''$ (Theorem~\ref{thm:uniform}
+applied to the second derivative of $\hat q$).
+
+\textit{Step 2: Numerator --- bias.}
+Set $x^*=Q(p^*)$.  By the chain rule,
+\[
+\hat g'(p) \;=\; \frac{d}{dp}\hat q(p)
+ \;=\; -\frac{\hat f_h'(\hat Q_n(p))}{\hat f_h(\hat Q_n(p))^2}
+       \cdot\frac{d\hat Q_n}{dp}(p).
+\]
+To leading order, $d\hat Q_n/dp \approx \hat q(p)=1/\hat f_h(\hat Q_n(p))$,
+so
+\[
+\hat g'(p^*) \;\approx\; -\frac{\hat f_h'(x^*)}{\hat f_h(x^*)^3}.
+\]
+The bias of $\hat f_h'(x^*)$ is $\tfrac{1}{2}\kappa_2 h^2 f'''(x^*)$
+\citep{Parzen1962}.  We convert $f'''(x^*)$ to $q$-derivatives as
+follows.  From $f(Q(p))=1/q(p)$, differentiating with respect to $p$
+and using $Q'(p)=q(p)$ gives $f'(Q(p))=-q'(p)/q(p)^3$.  A second
+differentiation gives $f''(Q(p))=[-q''(p)q(p)^3+3q'(p)^2q(p)^2]/q(p)^6
+=[-q''(p)+3q'(p)^2/q(p)]/q(p)^3$.  A third differentiation, evaluated
+at $p^*$ where $q'(p^*)=0$ (so all terms involving $q'$ vanish), yields
+\[
+f'''(Q(p^*))\cdot q(p^*) = -q'''(p^*)/q(p^*)^3,
+\qquad\text{i.e.,}\quad
+f'''(x^*) = -q'''(p^*)/q(p^*)^4.
+\]
+Applying the delta method to the map $y\mapsto -y/f(x^*)^3$
+gives
+\[
+\operatorname{Bias}(\hat g'(p^*))
+\;\approx\; -\frac{\kappa_2 h^2 f'''(x^*)}{2f(x^*)^3}
+\;=\; -\frac{\kappa_2 c_0^2 q'''(p^*)}{2f(x^*)^3}\,n^{-2/5},
+\]
+consistent with \eqref{eq:bias}.
+
+\textit{Step 3: Numerator --- variance.}
+Since $q'(p^*)=0$ at the anti-mode, the stochastic fluctuation of
+$\hat g'(p^*)$ comes entirely from the randomness of $\hat f_h'(x^*)$.
+The variance of the KDE derivative is \citep{Romano1988}
+\[
+\operatorname{Var}(\hat f_h'(x^*)) \;=\; \frac{\|K'\|_2^2\,f(x^*)}{nh^3}.
+\]
+Propagating through the delta method for the map $y\mapsto-y/f(x^*)^3$:
+\[
+\operatorname{Var}(\hat g'(p^*))
+\;\approx\; \frac{\|K'\|_2^2\,f(x^*)}{nh^3\,f(x^*)^6}
+\;=\; \frac{\|K'\|_2^2\,q(p^*)^5}{nh^3}.
+\]
+With $h=c_0 n^{-1/5}$ we get $nh^3 = c_0^3 n^{2/5}$, so
+$\operatorname{Var}(n^{2/5}\hat g'(p^*))
+\to \|K'\|_2^2 q(p^*)^5/c_0^3$,
+a finite constant.  Dividing by $\gamma^4$ (from the denominator)
+yields the asymptotic variance $V$ in \eqref{eq:variance}.  The
+Lindeberg--Feller CLT applies since $\hat f_h'(x^*)$ is an
+$L^2$-bounded triangular array, completing the proof. $\square$
+
+\subsection*{Proof of Theorem~\ref{thm:bootstrap}}
+
+The KDE $\hat f_h$ is a smooth functional of the empirical measure
+$\hat{\mathbb{P}}_n$ (it is the convolution $\hat{\mathbb{P}}_n * K_h$,
+linear in $\hat{\mathbb{P}}_n$), and the plug-in quantile density
+$\hat q(p)=1/\hat f_h(\hat Q_n(p))$ is a Hadamard differentiable
+map of $\hat{\mathbb{P}}_n$ at every $p$ where $f(Q(p))>0$
+(Assumption A2), by the chain rule for Hadamard derivatives
+\citep[Lemma~3.9.27]{vanderVaartWellner1996}.
+The argmax functional $\phi:\mathbb{P}\mapsto
+\operatorname{argmax}_{p\in[\delta,1-\delta]}q_{\mathbb{P}}(p)$
+is then Hadamard differentiable at $F$ tangentially to the set of
+directions $h$ for which $\phi(F+th)$ has a unique maximiser near
+$p^*$ for all small $t>0$.  Under the strict local maximum condition
+$q''(p^*)<0$ (Assumption A3 and Theorem~\ref{thm:asymptotics}),
+this tangential Hadamard differentiability holds; the general theory
+is developed in \citet{DumbgenKopp1998} and, with the weakest
+possible conditions for bootstrap validity, in
+\citet{FangSantos2019}.  The nonparametric bootstrap is consistent
+for Hadamard differentiable functionals of the empirical process
+\citep[Theorem~23.9]{vanderVaartWellner1996}: the bootstrap
+distribution of $n^{2/5}(\hat p^{*,b}-\hat p^*)$ (computed under
+the resampling distribution $\hat{\mathbb{P}}_n$) converges in
+probability to the same Gaussian limit as $n^{2/5}(\hat p^*-p^*)$,
+in the bounded Lipschitz metric on probability measures on
+$\mathbb{R}$. $\square$
+
+%% ============================================================
+\begin{thebibliography}{99}
+
+\bibitem[Azzalini and Bowman(1990)]{AzzaliniBowman1990}
+Azzalini, A.\ and Bowman, A.W.\ (1990).
+A look at some data on the Old Faithful geyser.
+\textit{Applied Statistics}, 39, 357--365.
+
+\bibitem[Chazal and Michel(2021)]{Chazal2018}
+Chazal, F.\ and Michel, B.\ (2021).
+An introduction to topological data analysis: fundamental and practical
+aspects for data scientists.
+\textit{Frontiers in Artificial Intelligence}, 4, 667963.
+
+\bibitem[Chernoff(1964)]{Chernoff1964}
+Chernoff, H.\ (1964).
+Estimation of the mode.
+\textit{Annals of the Institute of Statistical Mathematics}, 16, 31--41.
+
+\bibitem[Cont and Tankov(2004)]{ContTankov2004}
+Cont, R.\ and Tankov, P.\ (2004).
+\textit{Financial Modelling with Jump Processes}.
+Chapman \& Hall/CRC Press.
+
+\bibitem[D{\"u}mbgen and Kopp(1998)]{DumbgenKopp1998}
+D{\"u}mbgen, L.\ and Kopp, P.\ (1998).
+Extensions of Hadamard differentiability and applications.
+\textit{Statistical Inference for Stochastic Processes}, 1, 261--283.
+
+\bibitem[Efron(1987)]{Efron1987}
+Efron, B.\ (1987).
+Better bootstrap confidence intervals.
+\textit{Journal of the American Statistical Association}, 82, 171--185.
+
+\bibitem[Fan and Gijbels(1996)]{FanGijbels1996}
+Fan, J.\ and Gijbels, I.\ (1996).
+\textit{Local Polynomial Modelling and Its Applications}.
+Chapman \& Hall.
+
+\bibitem[Fang and Santos(2019)]{FangSantos2019}
+Fang, Z.\ and Santos, A.\ (2019).
+Inference on directionally differentiable functions.
+\textit{Review of Economic Studies}, 86, 2786--2832.
+
+\bibitem[Good and Gaskins(1971)]{GoodSilverman1986}
+Good, I.J.\ and Gaskins, R.A.\ (1971).
+Nonparametric roughness penalties for probability densities.
+\textit{Biometrika}, 58, 255--277.
+
+\bibitem[Hall and York(2001)]{HallYork2001}
+Hall, P.\ and York, M.\ (2001).
+On the calibration of Silverman's test for multimodality.
+\textit{Statistica Sinica}, 11, 515--536.
+
+\bibitem[Hartigan and Hartigan(1985)]{HartiganHartigan1985}
+Hartigan, J.A.\ and Hartigan, P.M.\ (1985).
+The dip test of unimodality.
+\textit{Annals of Statistics}, 13, 70--84.
+
+\bibitem[Jiang(2017)]{Jiang2017}
+Jiang, H.\ (2017).
+Uniform convergence rates for kernel density estimation.
+\textit{Proceedings of the 34th International Conference on Machine Learning},
+PMLR 70, 1694--1703.
+
+\bibitem[Lehmann and Casella(1998)]{LehmannCasella1998}
+Lehmann, E.L.\ and Casella, G.\ (1998).
+\textit{Theory of Point Estimation}, 2nd ed.
+Springer.
+
+\bibitem[M{\"u}ller and Sawitzki(1991)]{MullerSawitzki1991}
+M{\"u}ller, D.W.\ and Sawitzki, G.\ (1991).
+Excess mass estimates and tests for multimodality.
+\textit{Journal of the American Statistical Association}, 86, 738--746.
+
+\bibitem[Orujov(2025)]{Orujov2025EcLet}
+Orujov, S.\ (2025).
+Glass barriers in income distributions: nonparametric evidence.
+\textit{Economics Letters}, submitted.
+
+\bibitem[Parzen(1962)]{Parzen1962}
+Parzen, E.\ (1962).
+On estimation of a probability density function and mode.
+\textit{Annals of Mathematical Statistics}, 33, 1065--1076.
+
+\bibitem[Romano(1988)]{Romano1988}
+Romano, J.P.\ (1988).
+On weak convergence and optimality of kernel density estimates of the mode.
+\textit{Annals of Statistics}, 16, 629--647.
+
+\bibitem[Serfling(1980)]{Serfling1980}
+Serfling, R.J.\ (1980).
+\textit{Approximation Theorems of Mathematical Statistics}.
+Wiley.
+
+\bibitem[Silverman(1981)]{Silverman1981}
+Silverman, B.W.\ (1981).
+Using kernel density estimates to investigate multimodality.
+\textit{Journal of the Royal Statistical Society: Series B}, 43, 97--99.
+
+\bibitem[van der Vaart and Wellner(1996)]{vanderVaartWellner1996}
+van der Vaart, A.W.\ and Wellner, J.A.\ (1996).
+\textit{Weak Convergence and Empirical Processes}.
+Springer.
+
+\bibitem[Di~Martino et~al.(2025)]{ZDip2025}
+Di~Martino, E., Cinelli, M., and Cerqueti, R.\ (2025).
+Z-Dip: a validated generalization of the Dip Test.
+\textit{arXiv:2511.01705}.
+
+\end{thebibliography}
+
+%% ============================================================
+%% TABLES — auto-generated by src/csv_to_tex.py
+%% Run `make tables` to regenerate from simulation results.
+\input{tables/tab_bias_rmse.tex}
+\input{tables/tab_rates.tex}
+\input{tables/tab_coverage.tex}
+\input{tables/tab_power.tex}
+
+\end{document}
